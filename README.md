@@ -8,8 +8,8 @@ URI: /auth/register
 Тело запроса:
 
 {
-  "email": "user@example.com",
-  "password": "SecurePass123!",
+  "email": "example@gmail.com",
+  "password": "SPass123!",
   "name": "Иван Иванов",
   "phone": "+79001234567"
 }
@@ -17,25 +17,11 @@ URI: /auth/register
 
 201 Created - успешная регистрация
 
-{
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "email": "user@example.com",
-  "name": "Иван Иванов",
-  "message": "Регистрация успешна"
-}
 400 Bad Request - некорректные данные
 
-{
-  "error": "Email уже используется",
-  "code": "EMAIL_EXISTS"
-}
 422 Unprocessable Entity - ошибки валидации
 
-{
-  "errors": {
-    "password": "Пароль должен содержать минимум 8 символов"
-  }
-}
+
 2. Авторизация
 Method: POST
 URI: /auth/login
@@ -50,16 +36,38 @@ URI: /auth/login
 
 200 OK - успешный вход
 
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "email": "user@example.com",
-    "name": "Иван Иванов"
-  }
-}
+
 401 Unauthorized - неверные учетные данные
 
-{
-  "error": "Неверный email или пароль"
-}
+3. Показ доступных книг
+Method: GET
+URI: /books
+Описание: Получение списка книг с возможностью фильтрации
+
+Коды ответов:
+
+200 OK - успешное получение списка
+
+204 No Content - книги не найдены
+
+4. Рекомендации книг
+Method: GET
+URI: /api/recommendations
+Описание: Получение рекомендаций книг
+Коды ответов:
+200 OK - успешное получение рекомендаций
+
+401 Unauthorized - требуется авторизация
+
+404 Not Found - недостаточно данных для рекомендаций
+
+5. Карта доступных библиотек
+Method: GET
+URI: /api/libraries
+Описание: Получение информации о библиотеках
+Коды ответов:
+
+200 OK - успешное получение списка библиотек
+
+
+204 No Content - библиотеки не найдены 

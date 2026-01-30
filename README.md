@@ -18,9 +18,9 @@ User-Agent:Chrome/120.0.0.0 Safari/537.36
 ```
 {
   "email": "example@gmail.com",
-  "password": "SPass123!",
+  "password": "Pass1234",
   "name": "Иван Иванов",
-  "phone": "+79001234567"
+  "phone": "+123456789"
 }
 ```
 ### Коды ответов:
@@ -36,7 +36,6 @@ Server: nginx
 ### Тело ответа
 ```
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
   "email": "example@gmail.com",
   "name": "Иван Иванов",
   "message": "Регистрация успешна"
@@ -85,8 +84,8 @@ User-Agent:Chrome/120.0.0.0 Safari/537.36
 ### Тело запроса:
 ```
 {
-  "email": "user@example.com",
-  "password": "SecurePass123!"
+  "email": "example@gmail.com",
+  "password": "Pass1234"
 }
 ```
 ### Коды ответов:
@@ -102,7 +101,6 @@ Server: nginx
 #### Тело ответа
 ```
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV",
   "user": {
     "email": "example@gmail.com",
     "name": "Иван Иванов"

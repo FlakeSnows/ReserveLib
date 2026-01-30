@@ -4,9 +4,17 @@
 #### Method: POST
 #### URI: /auth/register
 #### Описание: Создание нового аккаунта пользователя
-#### Заголовки запроса: Content-Type: application/json
 ### Тело запроса:
 
+### Заголовок запроса:
+```
+Accept:text/html,application/xhtml+xml
+Accept-Encoding: gzip
+Connection: keep-alive
+Host: libreserve.com
+User-Agent:Chrome/120.0.0.0 Safari/537.36
+```
+### Тело запроса:
 ```
 {
   "email": "example@gmail.com",
@@ -17,18 +25,63 @@
 ```
 ### Коды ответов:
 
-+ 201 Created - успешная регистрация
+###  201 Created - успешная регистрация
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 256
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+### Тело ответа
+```
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "email": "example@gmail.com",
+  "name": "Иван Иванов",
+  "message": "Регистрация успешна"
+}
+```
 
-+ 400 Bad Request - некорректные данные
+###  400 Bad Request - некорректные данные
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+### Тело ответа
+```
+  {"error": "Email уже используется"}
+```
 
-+ 422 Unprocessable Entity - ошибки валидации
+###  422 Unprocessable Entity - ошибки валидации
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+### Тело ответа
+```
+  {"error":  "Пароль должен содержать минимум 8 символов"}
+```
 
 
 ## 2. Авторизация
 #### Method: POST
 #### URI: /auth/login
 #### Описание: Аутентификация пользователя и получение токена
-#### Заголовки запроса: Content-Type: application/json
+### Заголовок запроса:
+```
+Accept:text/html,application/xhtml+xml
+Accept-Encoding: gzip
+Connection: keep-alive
+Host: libreserve.com
+User-Agent:Chrome/120.0.0.0 Safari/537.36
+```
 ### Тело запроса:
 ```
 {
@@ -38,31 +91,140 @@
 ```
 ### Коды ответов:
 
-+ 200 OK - успешный вход
+###  200 OK - успешный вход
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 256
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+#### Тело ответа
+```
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXV",
+  "user": {
+    "email": "example@gmail.com",
+    "name": "Иван Иванов"
+  }
+}
+```
 
-+ 401 Unauthorized - неверные учетные данные
+###  401 Unauthorized - неверные учетные данные
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+#### Тело ответа
+```
+{"error": "Неверный email или пароль"}
+```
 
 ## 3. Показ доступных книг
 #### Method: GET
 #### URI: /books
 #### Описание: Получение списка книг с возможностью фильтрации
-
+### Заголовок запроса:
+```
+Accept:text/html,application/xhtml+xml
+Accept-Encoding: gzip
+Connection: keep-alive
+Host: libreserve.com
+User-Agent:Chrome/120.0.0.0 Safari/537.36
+```
 ### Коды ответов:
 
-+ 200 OK - успешное получение списка
+###  200 OK - успешное получение списка
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+#### Тело ответа
+```
+{
+  "books": [
+    {
+      "id": "book-123",
+      "title": "Мастер и Маргарита",
+      "author": "Михаил Булгаков",
+      "genre": "Роман",
+      "available": true
+    }
+  ]
+}
+```
 
-+ 204 No Content - книги не найдены
+###  204 No Content - книги не найдены
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+#### Тело ответа
+```
+{"error":  "Книги не найдены"}
+```
 
 ## 4. Рекомендации книг
 #### Method: GET
 #### URI: /api/recommendations
 #### Описание: Получение рекомендаций книг
 ### Коды ответов:
-+ 200 OK - успешное получение рекомендаций
+###  200 OK - успешное получение рекомендаций
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+#### Тело ответа
+```
+{
+  "recommendations": [
+    {
+      "id": "book-456",
+      "title": "Преступление и наказание",
+      "author": "Фёдор Достоевский",
+      "genre": "Роман",
+    }
+  ]
+}
+```
 
-+ 401 Unauthorized - требуется авторизация
+### 401 Unauthorized - требуется авторизация
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+#### Тело ответа
+```
+{"error": "Требуется авторизация"}
+```
 
-+ 404 Not Found - недостаточно данных для рекомендаций
+###  404 Not Found - недостаточно данных для рекомендаций
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+#### Тело ответа
+```
+{"message": "Нету рекомендаций"}
+```
 
 ## 5. Карта доступных библиотек
 #### Method: GET
@@ -70,6 +232,37 @@
 #### Описание: Получение информации о библиотеках
 ### Коды ответов:
 
-+ 200 OK - успешное получение списка библиотек
+###  200 OK - успешное получение списка библиотек
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+#### Тело ответа
+```
+{
+  "libraries": [
+    {
+      "id": "lib-789",
+      "name": "Центральная библиотека",
+      "address": "ул. Ленина, 15",
+      "availableBooks": 124
+    }
+  ]
+}
+```
 
-+ 204 No Content - библиотеки не найдены 
+### 204 No Content - библиотеки не найдены 
+#### Заголовок ответа
+```
+Content-Encoding: gzip
+Content-Length: 64
+Content-Type: application/json; charset=UTF-8
+Server: nginx
+```
+#### Тело ответа
+```
+{"error":  "Библиотеки не найдены"}
+```

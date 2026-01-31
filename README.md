@@ -38,6 +38,7 @@ Server: nginx
 {
   "email": "example@gmail.com",
   "name": "Иван Иванов",
+  "userID": "1235123"
 }
 ```
 
@@ -172,7 +173,7 @@ Server: nginx
 
 ## 4. Рекомендации книг
 #### Method: GET
-#### URI: /api/recommendations
+#### URI: /api/recommendations/{"userID"}
 #### Описание: Получение рекомендаций книг
 ### Коды ответов:
 ###  200 OK - успешное получение рекомендаций

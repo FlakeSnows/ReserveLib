@@ -103,7 +103,8 @@ Server: nginx
 {
   "user": {
     "email": "example@gmail.com",
-    "name": "Иван Иванов"
+    "name": "Иван Иванов",
+    "userID": "1235123"
   }
 }
 ```

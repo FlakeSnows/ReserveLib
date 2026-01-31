@@ -38,7 +38,6 @@ Server: nginx
 {
   "email": "example@gmail.com",
   "name": "Иван Иванов",
-  "message": "Регистрация успешна"
 }
 ```
 

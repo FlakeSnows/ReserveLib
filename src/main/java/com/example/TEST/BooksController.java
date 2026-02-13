@@ -27,7 +27,11 @@ public class BooksController {
                 JsonNode volumeInfo = items.get(0).get("volumeInfo");
                 JsonNode description = volumeInfo.get("description");
 
-                return description != null ? description.asText() : "Описание отсутствует";
+                if (description != null) {
+                    return description.asText();
+                } else {
+                    return "Описание отсутствует";
+                }
             }
 
             return "Книга не найдена";

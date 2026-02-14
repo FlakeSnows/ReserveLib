@@ -16,25 +16,32 @@ public class BooksController {
     public String getDescription(@RequestParam String title) {
         try {
             String json = restClient.get()
-                    .uri("https://www.googleapis.com/books/v1/volumes?q={title}", title)
+                    .uri("https://www.googleapis.com/books/v1/volumes?q={title}&key=AIzaSyAvnA6FLGtyFkl72vEktwdQ5WgvGSCglz0", title)
                     .retrieve()
                     .body(String.class);
-            System.out.println(json);
             JsonNode root = mapper.readTree(json);
             JsonNode items = root.get("items");
-
+            System.out.println(json);
             if (items != null && !items.isEmpty()) {
-                JsonNode volumeInfo = items.get(0).get("volumeInfo");
-                JsonNode description = volumeInfo.get("description");
 
-                if (description != null) {
-                    return description.asText();
-                } else {
-                    return "Описание отсутствует";
+                for (JsonNode item : items) {
+                    JsonNode volumeInfo = item.get("volumeInfo");
+                    JsonNode publisher = volumeInfo.get("publisher");
+                    JsonNode description = volumeInfo.get("description");
+
+                    if (publisher != null && "ЛитРес".equals(publisher.asText())) {
+                        if (description != null) {
+                            return description.asText();
+                        } else {
+                            return "Описание отсутствует";
+                        }
+                    }
                 }
+
+                return "Книги на ЛитРес нету";
             }
 
-            return "Книга не найдена";
+            return "Книги не найдены";
 
         } catch (Exception e) {
             return "Ошибка: " + e.getMessage();

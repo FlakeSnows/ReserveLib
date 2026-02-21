@@ -1,4 +1,4 @@
-package com.example.TEST;
+package com.example.reservelib;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

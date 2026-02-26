@@ -36,6 +36,24 @@ public class BooksResponse {
 
         private String publisher;
         private String description;
+        private List<String> authors;
+        private String title;
+
+        public String getTitle(){
+            return title;
+        }
+
+        public void setTitle(String title){
+            this.title = title;
+        }
+
+        public List<String> getAuthors() {
+            return authors;
+        }
+
+        public void setAuthor(List<String> authors) {
+            this.authors = authors;
+        }
 
         public String getPublisher() {
             return publisher;

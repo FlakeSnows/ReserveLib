@@ -1,8 +1,10 @@
 package com.example.reservelib;
 
+import com.example.reservelib.dto.BookDto;
 import com.example.reservelib.dto.BooksResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,7 +17,8 @@ public class BooksService {
         this.properties = properties;
     }
 
-    public String getDescription(String title) {
+    public List<BookDto> getDescription(String title) {
+        List<BookDto> bookInfo = new ArrayList<>();
         try {
 
             String apiKey = properties.getProvider().getApiKey();
@@ -24,34 +27,42 @@ public class BooksService {
 
             BooksResponse response = client.getResponse(baseUrl, title, apiKey);
 
-            if (response == null || response.getItems() == null || response.getItems().isEmpty()) {
-                return "Книги не найдены";
-            }
             for (BooksResponse.Item item : response.getItems()) {
                 String publisher = item.getVolumeInfo().getPublisher();
-                String description = item.getVolumeInfo().getDescription();
-
                 if (publisher == null) {
                     continue;
                 }
 
-                String publisherText = publisher.toLowerCase();
+                boolean matches = false;
 
-                if (publisherKeywords.contains(publisherText)) {
-
-                    if (description != null) {
-                        return description;
-                    } else {
-                        return "Описание отсутствует";
+                String publisherText = publisher.toLowerCase().trim();
+                System.out.println(publisherText);
+                System.out.println(publisher);
+                for (String keyword : publisherKeywords) {
+                    System.out.println(keyword);
+                    String k = keyword.toLowerCase().trim();
+                    if (publisherText.contains(k)) {
+                        matches = true;
+                        break;
                     }
                 }
 
-            }
-            return "Книги издательства не найдены";
+                if (!matches) continue;
+                String description = item.getVolumeInfo().getDescription();
+                if (description == null) {
+                    description = "Нету описания";
+                }
+                    String BookTitle = item.getVolumeInfo().getTitle();
+                    List<String> authors = item.getVolumeInfo().getAuthors();
+                    bookInfo.add(new BookDto(description, authors, publisher, BookTitle));
+                }
+
+
         } catch (
                 Exception e) {
-            return "Ошибка: " + e.getMessage();
+            System.out.println(e.getMessage());
         }
+        return bookInfo;
     }
 }
 

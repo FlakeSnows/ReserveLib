@@ -8,12 +8,16 @@ import org.springframework.web.client.RestClient;
 public class BooksClient {
 
     private final RestClient restClient;
+    private final BooksProperties properties;
 
-    public BooksClient() {
+    public BooksClient(BooksProperties properties) {
+        this.properties = properties;
         this.restClient = RestClient.create();
     }
 
-    public BooksResponse getResponse(String baseUrl, String title, String apiKey) {
+    public BooksResponse getResponse(String title) {
+        String baseUrl = properties.getProvider().getBaseUrl();
+        String apiKey = properties.getProvider().getApiKey();
         return restClient.get()
                 .uri(baseUrl + "?q=" + title + "&key=" + apiKey)
                 .retrieve()

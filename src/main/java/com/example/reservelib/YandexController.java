@@ -1,5 +1,5 @@
+/*
 package com.example.reservelib;
-
 
 import com.example.reservelib.dto.BookDto;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,17 +11,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/books")
-public class BooksController {
+public class YandexController {
+
 
     private final BooksService booksService;
 
 
-    public BooksController(BooksService booksService) {
+    public YandexController(YandexProperties properties, BooksService booksService) {
+
         this.booksService = booksService;
     }
 
     @GetMapping("/description")
     public List<BookDto> getDescription(@RequestParam String title) {
-            return booksService.getDescription(title);
+        return booksService.getDescription(title);
     }
-}
+}*/

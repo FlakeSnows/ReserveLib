@@ -21,11 +21,9 @@ public class BooksService {
         List<BookDto> bookInfo = new ArrayList<>();
         try {
 
-            String apiKey = properties.getProvider().getApiKey();
-            String baseUrl = properties.getProvider().getBaseUrl();
             List<String> publisherKeywords = properties.getSearch().getPublisherKeywords();
 
-            BooksResponse response = client.getResponse(baseUrl, title, apiKey);
+            BooksResponse response = client.getResponse(title);
 
             for (BooksResponse.Item item : response.getItems()) {
                 String publisher = item.getVolumeInfo().getPublisher();
@@ -36,10 +34,7 @@ public class BooksService {
                 boolean matches = false;
 
                 String publisherText = publisher.toLowerCase().trim();
-                System.out.println(publisherText);
-                System.out.println(publisher);
                 for (String keyword : publisherKeywords) {
-                    System.out.println(keyword);
                     String k = keyword.toLowerCase().trim();
                     if (publisherText.contains(k)) {
                         matches = true;
@@ -50,11 +45,11 @@ public class BooksService {
                 if (!matches) continue;
                 String description = item.getVolumeInfo().getDescription();
                 if (description == null) {
-                    description = "Нету описания";
+                    description = "Нет описания";
                 }
-                    String BookTitle = item.getVolumeInfo().getTitle();
+                    String bookTitle = item.getVolumeInfo().getTitle();
                     List<String> authors = item.getVolumeInfo().getAuthors();
-                    bookInfo.add(new BookDto(description, authors, publisher, BookTitle));
+                    bookInfo.add(new BookDto(description, authors, publisher, bookTitle));
                 }
 
 

@@ -13,12 +13,10 @@ import java.util.List;
 @RequestMapping("/api/books")
 public class BooksController {
 
-    private final BooksProperties properties;
     private final BooksService booksService;
 
 
-    public BooksController(BooksProperties properties, BooksService booksService) {
-        this.properties = properties;
+    public BooksController(BooksService booksService) {
         this.booksService = booksService;
     }
 

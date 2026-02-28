@@ -51,7 +51,7 @@ public class BooksResponse {
             return authors;
         }
 
-        public void setAuthor(List<String> authors) {
+        public void setAuthors(List<String> authors) {
             this.authors = authors;
         }
 

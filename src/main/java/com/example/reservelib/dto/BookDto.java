@@ -4,10 +4,10 @@ import java.util.List;
 
 public class BookDto {
 
-    private String description;
-    private List<String> authors;
-    private String publisher;
-    private String title;
+    private final String description;
+    private final List<String> authors;
+    private final String publisher;
+    private final String title;
 
     public BookDto(String description, List<String> authors, String publisher,  String title) {
         this.description = description;

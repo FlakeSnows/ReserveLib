@@ -1,4 +1,4 @@
-package com.example.reservelib;
+package com.example.reservelib.books;
 
 import com.example.reservelib.dto.BooksResponse;
 import org.springframework.stereotype.Component;

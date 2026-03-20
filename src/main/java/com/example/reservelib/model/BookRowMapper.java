@@ -13,9 +13,9 @@ public class BookRowMapper implements RowMapper<Book> {
                 rs.getInt("id"),
                 rs.getString("title"),
                 rs.getString("author"),
-                rs.getString("description"),
-                rs.getString("library_name"),
-                rs.getString("isbn")
+                rs.getString("isbn"),
+                rs.getString("genre"),
+                rs.getString("description")
         );
     }
 }

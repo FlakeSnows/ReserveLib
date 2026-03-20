@@ -1,24 +1,28 @@
 package com.example.reservelib.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Book {
 
     private int id;
     private String title;
     private String author;
     private String isbn;
+    private String genre;
     private String description;
-    private String libraryName;
+    private List<String> libraryNames = new ArrayList<>();
 
     public Book() {
     }
 
-    public Book(int id, String title, String author, String isbn, String description, String libraryName) {
+    public Book(int id, String title, String author, String isbn, String genre, String description) {
         this.id = id;
         this.title = title;
         this.author = author;
         this.isbn = isbn;
+        this.genre = genre;
         this.description = description;
-        this.libraryName = libraryName;
     }
 
     public int getId() {
@@ -53,6 +57,14 @@ public class Book {
         this.isbn = isbn;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -61,23 +73,11 @@ public class Book {
         this.description = description;
     }
 
-    public String getLibraryName() {
-        return libraryName;
+    public List<String> getLibraryNames() {
+        return libraryNames;
     }
 
-    public void setLibraryName(String libraryName) {
-        this.libraryName = libraryName;
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", isbn='" + isbn + '\'' +
-                ", description='" + description + '\'' +
-                ", libraryName='" + libraryName + '\'' +
-                '}';
+    public void setLibraryNames(List<String> libraryNames) {
+        this.libraryNames = libraryNames;
     }
 }

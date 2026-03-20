@@ -1,12 +1,15 @@
 package com.example.reservelib.catalog.dto;
 
+import java.util.List;
+
 public class BookRequest {
 
     private String title;
     private String author;
     private String isbn;
+    private String genre;
     private String description;
-    private String libraryName;
+    private List<String> libraryNames;
 
     public String getTitle() {
         return title;
@@ -32,6 +35,14 @@ public class BookRequest {
         this.isbn = isbn;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -40,11 +51,11 @@ public class BookRequest {
         this.description = description;
     }
 
-    public String getLibraryName() {
-        return libraryName;
+    public List<String> getLibraryNames() {
+        return libraryNames;
     }
 
-    public void setLibraryName(String libraryName) {
-        this.libraryName = libraryName;
+    public void setLibraryNames(List<String> libraryNames) {
+        this.libraryNames = libraryNames;
     }
 }

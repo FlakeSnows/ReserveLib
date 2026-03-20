@@ -1,267 +1,69 @@
-#  LibReserve
+# ReserveLib
+Приложение для поиска книг и просмотра библиотек Екатеринбурга, в которых эти книги доступны.
 
-## 1. Регистрация пользователя
-#### Method: POST
-#### URI: /api/auth/register
-#### Описание: Создание нового аккаунта пользователя
-### Тело запроса:
+## Требования
 
-### Заголовок запроса:
+- Java 21+
+- Maven 3.9+
+- PostgreSQL
+
+## База данных
+
+Нужно создать базу данных `library` в PostgreSQL.
+
+Пример параметров подключения:
+- host: `localhost`
+- port: `2593`
+- database: `library`
+- username: `postgres`
+- password: задается в `application.properties` или через переменные окружения
+
+## Конфигурация и секреты
+
+Основные параметры можно задавать в `src/main/resources/application.properties` или через переменные окружения:
+
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `BOOKS_API_KEY`
+- `YANDEX_MAPS_API_KEY`
+
+
+## 7. Полезные URL
+```md
+## Полезные URL
+
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- Healthcheck: `http://localhost:8080/actuator/health`
 ```
-Accept:text/html,application/xhtml+xml
-Accept-Encoding: gzip
-Connection: keep-alive
-Host: libreserve.com
-User-Agent:Chrome/120.0.0.0 Safari/537.36
-```
-### Тело запроса:
-```
+## Основные API endpoints
+
+### Книги
+- `GET /api/books` — получить список книг
+- `GET /api/books/{id}` — получить книгу по id
+- `POST /api/books` — создать книгу
+- `PUT /api/books/{id}` — обновить книгу
+- `DELETE /api/books/{id}` — удалить книгу
+- `GET /api/books/{id}/libraries` — получить библиотеки, в которых есть книга
+
+## Пример создания книги
+
+```json
 {
-  "email": "example@gmail.com",
-  "password": "Pass1234",
-  "name": "Иван Иванов",
-  "phone": "+123456789"
-}
-```
-### Коды ответов:
-
-###  201 Created - успешная регистрация
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 256
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-### Тело ответа
-```
-{
-  "email": "example@gmail.com",
-  "name": "Иван Иванов",
-  "userID": "1235123"
-}
-```
-
-###  400 Bad Request - некорректные данные
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-### Тело ответа
-```
-  {"error": "Email уже используется"}
-```
-
-###  422 Unprocessable Entity - ошибки валидации
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-### Тело ответа
-```
-  {"error":  "Пароль должен содержать минимум 8 символов"}
-```
-
-
-## 2. Авторизация
-#### Method: POST
-#### URI: /api/auth/login
-#### Описание: Аутентификация пользователя и получение токена
-### Заголовок запроса:
-```
-Accept:text/html,application/xhtml+xml
-Accept-Encoding: gzip
-Connection: keep-alive
-Host: libreserve.com
-User-Agent:Chrome/120.0.0.0 Safari/537.36
-```
-### Тело запроса:
-```
-{
-  "email": "example@gmail.com",
-  "password": "Pass1234"
-}
-```
-### Коды ответов:
-
-###  200 OK - успешный вход
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 256
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-#### Тело ответа
-```
-{
-  "user": {
-    "email": "example@gmail.com",
-    "name": "Иван Иванов",
-    "userID": "1235123"
-  }
+  "title": "Мастер и Маргарита",
+  "author": "Михаил Булгаков",
+  "isbn": "978-5-17-149175-4",
+  "description": "Роман о добре и зле",
+  "genre": "Детектив",
+  "libraryNames": ["ЦГБ", "ГБИЦ"]
 }
 ```
 
-###  401 Unauthorized - неверные учетные данные
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-#### Тело ответа
-```
-{"error": "Неверный email или пароль"}
-```
 
-## 3. Показ доступных книг
-#### Method: GET
-#### URI: /api/books
-#### Описание: Получение списка книг с возможностью фильтрации
-### Заголовок запроса:
-```
-Accept:text/html,application/xhtml+xml
-Accept-Encoding: gzip
-Connection: keep-alive
-Host: libreserve.com
-User-Agent:Chrome/120.0.0.0 Safari/537.36
-```
-### Коды ответов:
+## Структура данных
 
-###  200 OK - успешное получение списка
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-#### Тело ответа
-```
-{
-  "books": [
-    {
-      "id": "book-123",
-      "title": "Мастер и Маргарита",
-      "author": "Михаил Булгаков",
-      "genre": "Роман",
-      "available": true
-    }
-  ]
-}
-```
+Используются таблицы:
+- `books`
+- `libraries`
+- `book_libraries`
 
-###  204 No Content - книги не найдены
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-#### Тело ответа
-```
-{"error":  "Книги не найдены"}
-```
-
-## 4. Рекомендации книг
-#### Method: GET
-#### URI: /api/recommendations/{"userID"}
-#### Описание: Получение рекомендаций книг
-### Коды ответов:
-###  200 OK - успешное получение рекомендаций
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-#### Тело ответа
-```
-{
-  "recommendations": [
-    {
-      "id": "book-456",
-      "title": "Преступление и наказание",
-      "author": "Фёдор Достоевский",
-      "genre": "Роман",
-    }
-  ]
-}
-```
-
-### 401 Unauthorized - требуется авторизация
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-#### Тело ответа
-```
-{"error": "Требуется авторизация"}
-```
-
-###  404 Not Found - недостаточно данных для рекомендаций
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-#### Тело ответа
-```
-{"message": "Нету рекомендаций"}
-```
-
-## 5. Карта доступных библиотек
-#### Method: GET
-#### URI: /api/libraries
-#### Описание: Получение информации о библиотеках
-### Коды ответов:
-
-###  200 OK - успешное получение списка библиотек
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-#### Тело ответа
-```
-{
-  "libraries": [
-    {
-      "id": "lib-789",
-      "name": "Центральная библиотека",
-      "address": "ул. Ленина, 15",
-      "availableBooks": 124
-    }
-  ]
-}
-```
-
-### 204 No Content - библиотеки не найдены 
-#### Заголовок ответа
-```
-Content-Encoding: gzip
-Content-Length: 64
-Content-Type: application/json; charset=UTF-8
-Server: nginx
-```
-#### Тело ответа
-```
-{"error":  "Библиотеки не найдены"}
-```

@@ -1,6 +1,7 @@
 package com.example.reservelib.catalog;
 
 import com.example.reservelib.catalog.dto.BookRequest;
+import com.example.reservelib.catalog.dto.LibraryResponse;
 import com.example.reservelib.model.Book;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +34,11 @@ public class BookCatalogController {
     @GetMapping("/{id}")
     public Book getBookById(@PathVariable int id) {
         return bookCatalogService.getBookById(id);
+    }
+
+    @GetMapping("/{id}/libraries")
+    public List<LibraryResponse> getLibrariesByBookId(@PathVariable int id) {
+        return bookCatalogService.getLibrariesByBookId(id);
     }
 
     @PostMapping

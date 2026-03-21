@@ -31,10 +31,9 @@
 
 ## 7. Полезные URL
 ```md
-## Полезные URL
 
-- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
-- Healthcheck: `http://localhost:8080/actuator/health`
+- Swagger UI: http://localhost:8080/swagger-ui/index.html
+- Healthcheck: http://localhost:8080/actuator/health
 ```
 ## Основные API endpoints
 

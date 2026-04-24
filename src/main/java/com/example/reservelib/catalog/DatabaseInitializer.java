@@ -3,9 +3,13 @@ package com.example.reservelib.catalog;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class DatabaseInitializer {
+
+    private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -15,38 +19,38 @@ public class DatabaseInitializer {
     }
 
     private void initializeDatabase() {
-        jdbcTemplate.execute("""
-                CREATE TABLE IF NOT EXISTS libraries (
-                    id SERIAL PRIMARY KEY,
-                    name VARCHAR(200) NOT NULL UNIQUE,
-                    address VARCHAR(300) NOT NULL,
-                    latitude DOUBLE PRECISION,
-                    longitude DOUBLE PRECISION
-                )
-                """);
-
-        jdbcTemplate.execute("""
-                CREATE TABLE IF NOT EXISTS books (
-                    id SERIAL PRIMARY KEY,
-                    title VARCHAR(200),
-                    author VARCHAR(100),
-                    isbn VARCHAR(20),
-                    genre VARCHAR(100),
-                    description VARCHAR(1000)
-                )
-                """);
-
-        jdbcTemplate.execute("""
-                CREATE TABLE IF NOT EXISTS book_libraries (
-                    book_id INTEGER NOT NULL,
-                    library_id INTEGER NOT NULL,
-                    PRIMARY KEY (book_id, library_id),
-                    CONSTRAINT fk_book_libraries_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
-                    CONSTRAINT fk_book_libraries_library FOREIGN KEY (library_id) REFERENCES libraries(id) ON DELETE CASCADE
-                )
-                """);
-
         try {
+            jdbcTemplate.execute("""
+                    CREATE TABLE IF NOT EXISTS libraries (
+                        id SERIAL PRIMARY KEY,
+                        name VARCHAR(200) NOT NULL UNIQUE,
+                        address VARCHAR(300) NOT NULL,
+                        latitude DOUBLE PRECISION,
+                        longitude DOUBLE PRECISION
+                    )
+                    """);
+
+            jdbcTemplate.execute("""
+                    CREATE TABLE IF NOT EXISTS books (
+                        id SERIAL PRIMARY KEY,
+                        title VARCHAR(200),
+                        author VARCHAR(100),
+                        isbn VARCHAR(20),
+                        genre VARCHAR(100),
+                        description VARCHAR(1000)
+                    )
+                    """);
+
+            jdbcTemplate.execute("""
+                    CREATE TABLE IF NOT EXISTS book_libraries (
+                        book_id INTEGER NOT NULL,
+                        library_id INTEGER NOT NULL,
+                        PRIMARY KEY (book_id, library_id),
+                        CONSTRAINT fk_book_libraries_book FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+                        CONSTRAINT fk_book_libraries_library FOREIGN KEY (library_id) REFERENCES libraries(id) ON DELETE CASCADE
+                    )
+                    """);
+
             jdbcTemplate.execute("""
                     INSERT INTO libraries (name, address, latitude, longitude)
                     VALUES
@@ -88,6 +92,7 @@ public class DatabaseInitializer {
                     ON CONFLICT (name) DO NOTHING
                     """);
         } catch (DataAccessException ignored) {
+            log.warn("Database initialization skipped: {}", ignored.getMessage());
         }
     }
 }

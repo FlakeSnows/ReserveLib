@@ -15,6 +15,6 @@ public class ReserveLibApplication {
 }
 
 //http://localhost:8080/api/books/description?title=
-//https://www.googleapis.com/books/v1/volumes?q=война&key=AIzaSyAvnA6FLGtyFkl72vEktwdQ5WgvGSCglz0
+//https://www.googleapis.com/books/v1/volumes?q=Ð²Ð¾Ð¹Ð½Ð°&key=AIzaSyAvnA6FLGtyFkl72vEktwdQ5WgvGSCglz0
 //http://localhost:8080/api/yandex/coordinates?address=
-//сделать таблицу с адресами библиотек и связать с другой таблицей
+//ÑÐ´ÐµÐ»Ð°ÑÑ ÑÐ°Ð±Ð»Ð¸ÑÑ Ñ Ð°Ð´ÑÐµÑÐ°Ð¼Ð¸ Ð±Ð¸Ð±Ð»Ð¸Ð¾ÑÐµÐº Ð¸ ÑÐ²ÑÐ·Ð°ÑÑ Ñ Ð´ÑÑÐ³Ð¾Ð¹ ÑÐ°Ð±Ð»Ð¸ÑÐµÐ¹

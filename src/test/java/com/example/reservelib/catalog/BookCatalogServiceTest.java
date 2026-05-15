@@ -1,6 +1,7 @@
 package com.example.reservelib.catalog;
 
 import com.example.reservelib.catalog.dto.BookRequest;
+import com.example.reservelib.catalog.dto.PageResponse;
 import com.example.reservelib.model.Book;
 import com.example.reservelib.irbis.IrbisService;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,11 +33,12 @@ class BookCatalogServiceTest {
     @Test
     void testGetAllBooksEmpty() {
         // Если в базе пусто, должен вернуться пустой список
-        when(jdbcTemplate.query(anyString(), any(com.example.reservelib.model.BookRowMapper.class)))
+        when(jdbcTemplate.queryForObject(anyString(), eq(Long.class), any())).thenReturn(0L);
+        when(jdbcTemplate.query(anyString(), any(com.example.reservelib.model.BookRowMapper.class), any()))
                 .thenReturn(Collections.emptyList());
 
-        List<Book> result = service.getAllBooks();
-        assertTrue(result.isEmpty(), "Список должен быть пустым");
+        PageResponse<Book> result = service.getAllBooks(0, 20);
+        assertTrue(result.getContent().isEmpty(), "Список должен быть пустым");
     }
 
     @Test

@@ -5,6 +5,7 @@ import com.example.reservelib.catalog.dto.LibrariesBatchCheckResponse;
 import com.example.reservelib.catalog.dto.LibraryCheckFailure;
 import com.example.reservelib.catalog.dto.LibraryCheckResponse;
 import com.example.reservelib.catalog.dto.LibraryRefreshStatusResponse;
+import com.example.reservelib.catalog.dto.PageResponse;
 import com.example.reservelib.irbis.IrbisService;
 import com.example.reservelib.irbis.dto.IrbisLibrariesResponse;
 import com.example.reservelib.model.Book;
@@ -44,25 +45,63 @@ public class BookCatalogService {
         this.irbisService = irbisService;
     }
 
-    public List<Book> searchBooksByTitle(String title) {
-        List<Book> books = jdbcTemplate.query("""
+    public PageResponse<Book> searchBooks(String title, String author, String genre, int page, int size) {
+        StringBuilder sql = new StringBuilder("""
                 SELECT id, title, author, isbn, genre, description, last_libraries_sync_at
                 FROM books
-                WHERE title ILIKE ?
-                ORDER BY title
-                """, bookRowMapper, "%" + title.trim() + "%");
+                WHERE 1=1
+                """);
+        
+        StringBuilder countSql = new StringBuilder("""
+                SELECT count(*)
+                FROM books
+                WHERE 1=1
+                """);
+        
+        List<Object> params = new ArrayList<>();
+
+        if (title != null && !title.isBlank()) {
+            String condition = " AND title ILIKE ?";
+            sql.append(condition);
+            countSql.append(condition);
+            params.add("%" + title.trim() + "%");
+        }
+        
+        if (author != null && !author.isBlank()) {
+            String condition = " AND author ILIKE ?";
+            sql.append(condition);
+            countSql.append(condition);
+            params.add("%" + author.trim() + "%");
+        }
+
+        if (genre != null && !genre.isBlank()) {
+            String condition = " AND genre ILIKE ?";
+            sql.append(condition);
+            countSql.append(condition);
+            params.add("%" + genre.trim() + "%");
+        }
+
+        // Узнаем общее количество книг по этому запросу
+        Long totalElements = jdbcTemplate.queryForObject(countSql.toString(), Long.class, params.toArray());
+        if (totalElements == null) totalElements = 0L;
+
+        // Добавляем сортировку и пагинацию
+        sql.append(" ORDER BY id ASC");
+        sql.append(" LIMIT ? OFFSET ?");
+        
+        // LIMIT и OFFSET параметры
+        params.add(size);
+        params.add(page * size);
+
+        // Получаем книги для текущей страницы
+        List<Book> books = jdbcTemplate.query(sql.toString(), bookRowMapper, params.toArray());
         fillLibraryNames(books);
-        return books;
+        
+        return new PageResponse<>(books, page, size, totalElements);
     }
 
-    public List<Book> getAllBooks() {
-        List<Book> books = jdbcTemplate.query("""
-                SELECT id, title, author, isbn, genre, description, last_libraries_sync_at
-                FROM books
-                ORDER BY id
-                """, bookRowMapper);
-        fillLibraryNames(books);
-        return books;
+    public PageResponse<Book> getAllBooks(int page, int size) {
+        return searchBooks(null, null, null, page, size);
     }
 
     public Book getBookById(Long id) {

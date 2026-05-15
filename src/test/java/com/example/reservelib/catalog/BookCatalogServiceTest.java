@@ -6,12 +6,10 @@ import com.example.reservelib.model.Book;
 import com.example.reservelib.irbis.IrbisService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -19,22 +17,22 @@ import static org.mockito.Mockito.*;
 
 class BookCatalogServiceTest {
 
-    private JdbcTemplate jdbcTemplate;
+    private BookRepository bookRepository;
     private IrbisService irbisService;
     private BookCatalogService service;
 
     @BeforeEach
     void setUp() {
-        jdbcTemplate = mock(JdbcTemplate.class);
+        bookRepository = mock(BookRepository.class);
         irbisService = mock(IrbisService.class);
-        service = new BookCatalogService(jdbcTemplate, irbisService);
+        service = new BookCatalogService(bookRepository, irbisService);
     }
 
     @Test
     void testGetAllBooksEmpty() {
         // Если в базе пусто, должен вернуться пустой список
-        when(jdbcTemplate.queryForObject(anyString(), eq(Long.class), any())).thenReturn(0L);
-        when(jdbcTemplate.query(anyString(), any(com.example.reservelib.model.BookRowMapper.class), any()))
+        when(bookRepository.countBooks(any(), any(), any())).thenReturn(0L);
+        when(bookRepository.findBooks(any(), any(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.emptyList());
 
         PageResponse<Book> result = service.getAllBooks(0, 20);
@@ -44,8 +42,7 @@ class BookCatalogServiceTest {
     @Test
     void testGetBookByIdNotFound() {
         // Если книги нет, должна быть ошибка 404 (ResponseStatusException)
-        when(jdbcTemplate.query(anyString(), any(com.example.reservelib.model.BookRowMapper.class), anyLong()))
-                .thenReturn(Collections.emptyList());
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(ResponseStatusException.class, () -> {
             service.getBookById(1L);
@@ -65,8 +62,8 @@ class BookCatalogServiceTest {
 
     @Test
     void testDeleteBookNotFound() {
-        // Если удаляем то, чего нет, JdbcTemplate вернет 0 измененных строк
-        when(jdbcTemplate.update(anyString(), anyLong())).thenReturn(0);
+        // Если удаляем то, чего нет, BookRepository вернет 0 измененных строк
+        when(bookRepository.delete(anyLong())).thenReturn(0);
 
         assertThrows(ResponseStatusException.class, () -> {
             service.deleteBook(999L);

@@ -4,8 +4,10 @@ import com.example.reservelib.catalog.dto.BookRequest;
 import com.example.reservelib.catalog.dto.LibrariesBatchCheckResponse;
 import com.example.reservelib.catalog.dto.LibraryCheckResponse;
 import com.example.reservelib.catalog.dto.LibraryRefreshStatusResponse;
-import com.example.reservelib.catalog.dto.LibraryResponse;
 import com.example.reservelib.model.Book;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +26,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/books")
+@Tag(name = "Book Catalog", description = "Endpoints for managing and searching books in the catalog")
 public class BookCatalogController {
 
     private final BookCatalogService bookCatalogService;
@@ -32,7 +36,16 @@ public class BookCatalogController {
     }
 
     @GetMapping
-    public List<Book> getAllBooks() {
+    @Operation(summary = "Get all books or search by title",
+            description = "Returns a list of all books if no title is provided. " +
+                          "If a title is provided, it performs a case-insensitive search for books with a matching title.")
+    public List<Book> findBooks(
+            @Parameter(description = "Title to search for (case-insensitive, partial match)")
+            @RequestParam(required = false) String title
+    ) {
+        if (title != null && !title.isBlank()) {
+            return bookCatalogService.searchBooksByTitle(title);
+        }
         return bookCatalogService.getAllBooks();
     }
 

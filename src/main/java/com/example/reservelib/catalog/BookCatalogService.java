@@ -5,7 +5,6 @@ import com.example.reservelib.catalog.dto.LibrariesBatchCheckResponse;
 import com.example.reservelib.catalog.dto.LibraryCheckFailure;
 import com.example.reservelib.catalog.dto.LibraryCheckResponse;
 import com.example.reservelib.catalog.dto.LibraryRefreshStatusResponse;
-import com.example.reservelib.catalog.dto.LibraryResponse;
 import com.example.reservelib.irbis.IrbisService;
 import com.example.reservelib.irbis.dto.IrbisLibrariesResponse;
 import com.example.reservelib.model.Book;
@@ -43,6 +42,17 @@ public class BookCatalogService {
     public BookCatalogService(JdbcTemplate jdbcTemplate, IrbisService irbisService) {
         this.jdbcTemplate = jdbcTemplate;
         this.irbisService = irbisService;
+    }
+
+    public List<Book> searchBooksByTitle(String title) {
+        List<Book> books = jdbcTemplate.query("""
+                SELECT id, title, author, isbn, genre, description, last_libraries_sync_at
+                FROM books
+                WHERE title ILIKE ?
+                ORDER BY title
+                """, bookRowMapper, "%" + title.trim() + "%");
+        fillLibraryNames(books);
+        return books;
     }
 
     public List<Book> getAllBooks() {

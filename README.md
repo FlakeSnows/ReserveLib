@@ -1,89 +1,53 @@
 # ReserveLib
-Приложение для поиска книг и просмотра библиотек Екатеринбурга, в которых эти книги доступны.
 
-## Требования
+Бэкенд-сервис для управления каталогом книг и интеграции с системой ИРБИС (Екатеринбург).
 
-- Java 21+
-- Maven 3.9+
-- PostgreSQL
+## Стек технологий
+- **Java 21**, **Spring Boot 3**, **Maven 3.9+**
+- **PostgreSQL 15+**, **Flyway** (миграции БД)
+- **Docker**, **Docker Compose**
+- **Swagger / OpenAPI 3** (документация API)
+- **Spring Actuator** (Healthcheck)
 
-## База данных
+## Конфигурация и управление секретами
+Секреты (учетные данные БД, API-ключи) не хранятся в коде. Приложение получает их из переменных окружения.
+При запуске через Docker Compose переменные пробрасываются из файла `.env` в корне проекта.
 
-При запуске через Docker Compose база данных настраивается автоматически.
+**Обязательные переменные:**
+* `DB_URL`
+* `DB_USERNAME`
+* `DB_PASSWORD`
+* `BOOKS_API_KEY`
 
-Пример параметров подключения (в контейнере / локально):
-- host: `lib_db` / `localhost`
-- port: `5432`
-- database: `lib_db`
-- username: `user`
-- password: `password`
+## Запуск проекта
 
-## Запуск приложения
-
-### Через Docker Compose (рекомендуется)
-1. Убедитесь, что у вас установлен Docker и Docker Compose.
-2. Соберите и запустите контейнеры:
-   ```bash
-   docker-compose up --build
-   ```
-   Приложение будет доступно по адресу `http://localhost:8081`.
-
-### Локальный запуск (Maven)
-1. Убедитесь, что у вас установлена Java 21 и Maven.
-2. Запустите локальную БД PostgreSQL (или используйте Docker-контейнер `lib_db`).
-3. Установите переменные окружения (или настройте `application.properties`):
-   - `DB_URL=jdbc:postgresql://localhost:5432/lib_db`
-   - `DB_USERNAME=user`
-   - `DB_PASSWORD=password`
-   - `BOOKS_API_KEY=ваш_ключ`
-4. Запустите приложение
-   Приложение будет доступно по адресу `http://localhost:8081`.
-
-## Конфигурация и секреты
-
-Основные параметры можно задавать в `src/main/resources/application.properties` или через переменные окружения:
-
-- `DB_URL`
-- `DB_USERNAME`
-- `DB_PASSWORD`
-- `BOOKS_API_KEY`
-
-
-## 7. Полезные URL
-```md
-
-- Swagger UI: http://localhost:8081/swagger-ui/index.html
-- Healthcheck: http://localhost:8081/actuator/health
-```
-## Основные API endpoints
-
-### Книги
-- `GET /api/books` — получить список книг
-- `GET /api/books/{id}` — получить книгу по id
-- `POST /api/books` — создать книгу
-- `PUT /api/books/{id}` — обновить книгу
-- `DELETE /api/books/{id}` — удалить книгу
-- `GET /api/books/{id}/libraries` — получить библиотеки, в которых есть книга
-- `POST /api/books/{id}/libraries/check` — проверить библиотеки через IRBIS, если последняя проверка была больше 5 дней назад
-- `POST /api/books/libraries/check-stale` — проверить через IRBIS все книги, которые не проверялись 5 дней или больше
-
-## Пример создания книги
-
-```json
-{
-  "title": "Мастер и Маргарита",
-  "author": "Михаил Булгаков",
-  "isbn": "978-5-17-149175-4",
-  "description": "Роман о добре и зле",
-  "genre": "Детектив",
-  "libraryNames": ["ЦГБ", "ГБИЦ"]
-}
+**В Docker-контейнере (со сборкой образа и запуском БД):**
+```bash
+docker-compose up -d --build
 ```
 
+**Локально средствами Java (БД должна быть запущена отдельно):**
+```bash
+./mvnw spring-boot:run
+```
 
-## Структура данных
+## База данных и миграции
+- Используется PostgreSQL. Для персистентности данных в Docker настроен volume.
+- Схема БД инициализируется автоматически при старте приложения с помощью **Flyway** (`src/main/resources/db/migration`).
+- Структура включает таблицы `books`, `libraries` и `book_libraries` с соблюдением внешних ключей (Foreign Keys).
 
-Используются таблицы:
-- `books`
-- `libraries`
-- `book_libraries`
+## API и Контракты
+REST API использует корректные HTTP-методы (GET, POST, PUT, DELETE) и статусы ответов (200, 201, 204, 400, 404, 500). Включена валидация входных данных (Bean Validation) с возвратом структурированных ошибок 400 Bad Request.
+
+* **Swagger UI:** http://localhost:8081/swagger-ui/index.html
+
+**Ключевые эндпоинты:**
+* `GET /api/books?page=0&size=20` — получение списка книг (с пагинацией и фильтрами).
+* `POST /api/books` — создание книги (201 Created).
+* `PUT /api/books/{id}` — обновление данных книги.
+* `DELETE /api/books/{id}` — удаление книги (204 No Content).
+* `POST /api/books/{id}/libraries/check` — проверка наличия в библиотеках через интеграцию с ИРБИС.
+
+## Наблюдаемость (Observability)
+* **Healthcheck:** http://localhost:8081/actuator/health (отражает статус сервиса и подключения к БД).
+* **Логирование:** уровень логирования конфигурируется через `application.properties`. Логи включают timestamp, уровень, поток и сообщение.

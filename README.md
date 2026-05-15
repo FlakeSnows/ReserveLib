@@ -36,10 +36,7 @@
    - `DB_USERNAME=user`
    - `DB_PASSWORD=password`
    - `BOOKS_API_KEY=ваш_ключ`
-4. Запустите приложение:
-   ```bash
-   mvn spring-boot:run
-   ```
+4. Запустите приложение
    Приложение будет доступно по адресу `http://localhost:8081`.
 
 ## Конфигурация и секреты
@@ -55,8 +52,8 @@
 ## 7. Полезные URL
 ```md
 
-- Swagger UI: http://localhost:8080/swagger-ui/index.html
-- Healthcheck: http://localhost:8080/actuator/health
+- Swagger UI: http://localhost:8081/swagger-ui/index.html
+- Healthcheck: http://localhost:8081/actuator/health
 ```
 ## Основные API endpoints
 

@@ -1,0 +1,29 @@
+volumes:
+  lib_db:
+
+services:
+  lib_db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: lib_db
+    volumes:
+      - lib_db:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+  app:
+    image: reservelib-app
+    restart: always
+    build: .
+    ports:
+      - "8081:8081"
+    depends_on:
+      - lib_db
+    environment:
+      DB_URL: 'jdbc:postgresql://lib_db:5432/lib_db'
+      BOOKS_API_KEY: AIzaSyDqA77TtTruLDhIkR1GtExnaz6YrmZHs0Q
+      DB_USERNAME: user
+      DB_PASSWORD: password
+      JAVA_OPTS: "-Xmx512m"
